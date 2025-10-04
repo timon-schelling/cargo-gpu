@@ -12,7 +12,7 @@ default-run = "cargo-gpu"
 
 [features]
 default = [ "embed-legacy-target-specs" ]
-embed-legacy-target-specs = [ "dep:" ]
+embed-legacy-target-specs = [ "dep:legacy_target_specs" ]
 
 [dependencies]
 cargo_metadata.workspace = true
