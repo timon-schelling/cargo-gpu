@@ -29,6 +29,7 @@ use cargo_metadata::Metadata;
 use std::path::{Path, PathBuf};
 
 /// Extract legacy target specs from our executable into some directory
+#[cfg(feature = "embed-legacy-target-specs")]
 pub fn write_legacy_target_specs(target_spec_dir: &Path) -> anyhow::Result<()> {
     std::fs::create_dir_all(target_spec_dir)?;
     for (filename, contents) in legacy_target_specs::TARGET_SPECS {
