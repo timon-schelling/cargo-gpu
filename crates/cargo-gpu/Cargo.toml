@@ -10,11 +10,14 @@ license = "MIT OR Apache-2.0"
 default-run = "cargo-gpu"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = [ "embed-legacy-target-specs" ]
+embed-legacy-target-specs = [ "dep:legacy_target_specs" ]
+
 [dependencies]
 cargo_metadata.workspace = true
 anyhow.workspace = true
 spirv-builder = { workspace = true, features = ["clap", "watch"] }
-legacy_target_specs.workspace = true
 clap.workspace = true
 directories.workspace = true
 env_logger.workspace = true
@@ -24,6 +27,8 @@ serde.workspace = true
 serde_json.workspace = true
 crossterm.workspace = true
 semver.workspace = true
+
+legacy_target_specs = { workspace = true, optional = true }
 
 [dev-dependencies]
 test-log.workspace = true
