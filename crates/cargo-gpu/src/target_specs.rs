@@ -109,26 +109,32 @@ pub fn update_target_specs_files(
             }
         }
     } else {
-        // use legacy target specs bundled with cargo gpu
-        if source.is_path() {
-            // This is a stupid situation:
-            // * We can't be certain that there are `target-specs` in the local checkout (there may be some in `spirv-builder`)
-            // * We can't dump our legacy ones into the `install_dir`, as that would modify the local rust-gpu checkout
-            // -> do what the old cargo gpu did, one global dir for all target specs
-            // and hope parallel runs don't shred each other
-            target_specs_dst = cache_dir()?.join("legacy-target-specs-for-local-checkout");
-        }
-        log::info!(
-            "target-specs resolution: legacy target specs in directory `{}`",
-            target_specs_dst.display()
-        );
-        if update_files {
+        #[cfg(feature = "embed-legacy-target-specs")]
+        {
+            // use legacy target specs bundled with cargo gpu
+            if source.is_path() {
+                // This is a stupid situation:
+                // * We can't be certain that there are `target-specs` in the local checkout (there may be some in `spirv-builder`)
+                // * We can't dump our legacy ones into the `install_dir`, as that would modify the local rust-gpu checkout
+                // -> do what the old cargo gpu did, one global dir for all target specs
+                // and hope parallel runs don't shred each other
+                target_specs_dst = cache_dir()?.join("legacy-target-specs-for-local-checkout");
+            }
             log::info!(
-                "target-specs: Writing legacy target specs into `{}`",
+                "target-specs resolution: legacy target specs in directory `{}`",
                 target_specs_dst.display()
             );
-            write_legacy_target_specs(&target_specs_dst)?;
+            if update_files {
+                log::info!(
+                    "target-specs: Writing legacy target specs into `{}`",
+                    target_specs_dst.display()
+                );
+                write_legacy_target_specs(&target_specs_dst)?;
+            }
         }
+
+        #[cfg(not(feature = "embed-legacy-target-specs"))]
+        log::warn!("Legacy target specs not embeded. Enable feature `embed-legacy-target-specs` to use them.")
     }
 
     Ok(target_specs_dst)
